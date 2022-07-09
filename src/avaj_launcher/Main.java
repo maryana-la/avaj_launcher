@@ -4,7 +4,6 @@ package avaj_launcher;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.Random;
 import java.util.Scanner;
 import java.io.File;
@@ -45,8 +44,12 @@ public class Main {
             aircraftArray.get(i).registerTower(weatherTower);
             i++;
         }
-//        System.out.println(aircraftArray.toString());
 
+
+        for(int k = 0; k < num; k++) {
+            weatherTower.changeWeather();
+            System.out.println(k + "======================================");
+        }
 
 
 
@@ -56,14 +59,6 @@ public class Main {
 /*****************************************/
 
 //todo maybe add methods for changing weather
-//class Simulation {
-//    private int longitude;
-//    private int latitude;
-//    private int height;
-//
-//}
-//
-//
 
 class Coordinates {
     private int longitude;
@@ -82,61 +77,14 @@ class Coordinates {
 
     public int getHeight() { return this.height; }
 
-//    public void setLongitude(int longitude) { this.longitude = longitude; }
-//
-//    public void setLatitude(int latitude) { this.latitude = latitude; }
-//
-//    public void setHeight(int height) { this.height = height; }
-}
+    public void setLongitude(int longitude) { this.longitude = longitude; }
 
-/******************************************/
+    public void setLatitude(int latitude) { this.latitude = latitude; }
 
-abstract class Tower {
-    private ArrayList<Flyable> observers;
-
-    Tower() {
-        observers = new ArrayList<>();
-    }
-
-    public void register(Flyable flyable) {
-        this.observers.add(flyable);
-    }
-
-    public void unregister(Flyable flyable) {
-        this.observers.remove(flyable);
-    }
-
-    protected void conditionsChanged() {}
-}
-
-class WeatherTower extends Tower {
-    public WeatherTower() {
-        super();
-    }
-
-    public String getWeather(Coordinates coordinates) {
-        return null;
-    }
-
-    void changeWeather() {}
+    public void setHeight(int height) { this.height = height; }
 }
 
 /******************************************/
 
 
-class WeatherProvider {
-    private static final WeatherProvider weatherProvider = new WeatherProvider();
-    private static final String[] weather = {"SUN", "RAIN", "FOG", "SNOW"};
-
-    private WeatherProvider() {}
-
-    public static WeatherProvider getProvider() {
-        return weatherProvider;
-    }
-
-    public String getCurrentWeather(Coordinates coordinates) {
-        int num = new Random().nextInt(coordinates.getLatitude() * 4 + coordinates.getLongitude() * 3 + coordinates.getHeight() * 2) % 4;
-        return weather[num];
-    }
-}
 
