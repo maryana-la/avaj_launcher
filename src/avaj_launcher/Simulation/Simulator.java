@@ -1,6 +1,5 @@
 package avaj_launcher.Simulation;
 
-import avaj_launcher.Weather.WeatherProvider;
 import avaj_launcher.Flyable.*;
 
 import java.io.FileNotFoundException;
@@ -10,41 +9,25 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import static java.lang.System.exit;
-
 public class Simulator {
 
     static File toWrite;
+    private static int num;
 
     public static void main (String[] args) {
-        ArrayList<String> aircraftsToString = new ArrayList<>();
         if (args.length < 1) {
             System.out.println("Invalid number of arguments.");
-            exit(-1);
+            System.exit(-1);
         }
-        int num = receiveInfoFromInput(args, aircraftsToString);
-
-//        creating aircrafts
+        ArrayList<String> aircraftsToString = new ArrayList<>();
+        receiveInfoFromInput(args, aircraftsToString);
         createOutput();
         WeatherTower weatherTower = new WeatherTower();
-        AircraftLauncher aircraftLauncher = new AircraftLauncher();
-        ArrayList<Flyable> aircraftArray = new ArrayList<>();
-        for (String aircraft : aircraftsToString) {
-            Flyable air = aircraftLauncher.createAircraft(aircraft, weatherTower);
-            if (air != null)
-                aircraftArray.add(air);
-        }
-
-
-//        weather simulation
-        for(int i = 0; i < num; i++) {
-           addToFile((i + 1) + " ======================================");
-            weatherTower.changeWeather();
-        }
+        launchAircrafts(weatherTower, aircraftsToString);
+        runSimulation(weatherTower);
     }
 
-    private static int receiveInfoFromInput(String[] args, ArrayList<String> aircraftsToString) {
-        int num = 0;
+    private static void receiveInfoFromInput(String[] args, ArrayList<String> aircraftsToString) {
         try {
             File file = new File(args[0]);
             Scanner sc = new Scanner(file);
@@ -57,25 +40,40 @@ public class Simulator {
             }
         } catch (NumberFormatException e) {
             System.out.println("Error. Number of simulation is invalid. " + e.getMessage());
-            exit(-1);
+            System.exit(-1);
         } catch (FileNotFoundException e) {
             System.out.println("File error. " + e.getMessage());
-            exit(-1);
+            System.exit(-1);
         } catch (Exception e) {
-            System.out.println("Error. Other " + e.getMessage());
-            exit(-1);
+            System.out.println("Error. " + e.getMessage());
+            System.exit(-1);
         }
-        return num;
     }
-
 
     private static void createOutput() {
         toWrite = new File("simulation.txt");
-        try (FileWriter writer = new FileWriter(toWrite)) {
+        try { FileWriter writer = new FileWriter(toWrite);
             writer.write("");
         } catch (IOException e) {
             System.out.println("Error with output file. " + e.getMessage());
-            exit(-1);
+            System.exit(-1);
+        }
+    }
+
+    private static void launchAircrafts(WeatherTower weatherTower, ArrayList<String> aircraftsToString) {
+        AircraftLauncher aircraftLauncher = new AircraftLauncher();
+        ArrayList<Flyable> aircraftArray = new ArrayList<>();
+        for (String aircraft : aircraftsToString) {
+            Flyable air = aircraftLauncher.createAircraft(aircraft, weatherTower);
+            if (air != null)
+                aircraftArray.add(air);
+        }
+    }
+
+    private static void runSimulation(WeatherTower weatherTower) {
+        for(int i = 0; i < num; i++) {
+            addToFile("\n========= " + (i + 1) + " SIMULATION CIRCLE =========");
+            weatherTower.changeWeather();
         }
     }
 
@@ -83,9 +81,8 @@ public class Simulator {
         try (FileWriter writer = new FileWriter(toWrite, true)) {
             writer.write(str + "\n");
         } catch (IOException e) {
-            System.out.println("Error writing to file file. " + e.getMessage());
-            exit(-1);
+            System.out.println("Error writing to file. " + e.getMessage());
+            System.exit(-1);
         }
-
     }
 }

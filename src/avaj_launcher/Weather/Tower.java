@@ -19,7 +19,6 @@ public abstract class Tower {
 
     protected void conditionsChanged() {
         ArrayList<Flyable> temp = new ArrayList<>(observers);
-
         for(Flyable i : temp) {
             i.updateCondition();
         }

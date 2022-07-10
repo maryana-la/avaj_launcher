@@ -33,9 +33,9 @@ public class JetPlane extends Aircraft implements Flyable {
 
         if(coordinates.getHeight() <= 0) {
             Simulator.addToFile(getOutput() + " landing");
+            Simulator.addToFile(getOutput() + "latitude: " + coordinates.getLatitude() + " longitude: " + coordinates.getLongitude() + " height: " + coordinates.getHeight());
             weatherTower.unregister(this);
             Simulator.addToFile("Tower says: " + getOutput() + " unregistered from weather tower.");
-            Simulator.addToFile("latitude: " + coordinates.getLatitude() + " longitude: " + coordinates.getLongitude() + " height: " + coordinates.getHeight());
         }
     }
 

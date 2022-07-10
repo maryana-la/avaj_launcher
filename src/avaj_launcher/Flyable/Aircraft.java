@@ -17,6 +17,6 @@ public abstract class Aircraft {
     public String getName() { return name; }
 
     String getOutput() {
-        return getClass().getSimpleName() + "#" + name + "(" + id + ")";
+        return getClass().getSimpleName() + "#" + getName() + "(" + getId() + ")";
     }
 }

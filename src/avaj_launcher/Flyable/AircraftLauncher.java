@@ -18,7 +18,7 @@ public class AircraftLauncher extends AircraftFactory {
         } catch (NumberFormatException e) {
             System.out.println(airInfo[0] + " " + airInfo[1] + " not created. Invalid integer. " + e.getMessage());
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("Error creating an Aircraft. " + e.getMessage());
         }
         return temp;
     }
