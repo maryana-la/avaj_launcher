@@ -1,7 +1,6 @@
 package avaj_launcher;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Random;
 
 public enum Weather {
@@ -25,10 +24,10 @@ abstract class Tower {
     }
 
     protected void conditionsChanged() {
-        for(int i = 0; i < observers.size(); i++ ) {
-            observers.get(i).updateCondition();
+        ArrayList<Flyable> temp = new ArrayList<>(observers);
 
-            //todo correct removing ConcurrentModificationException
+        for(Flyable i : temp) {
+            i.updateCondition();
         }
     }
 }
@@ -43,8 +42,6 @@ class WeatherTower extends Tower {
     }
 
     void changeWeather() { super.conditionsChanged(); }
-
-
 }
 
 /******************************************/

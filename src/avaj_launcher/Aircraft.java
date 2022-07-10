@@ -1,6 +1,5 @@
 package avaj_launcher;
 
-
 import java.util.Locale;
 
 interface Flyable {
@@ -12,7 +11,7 @@ abstract class Aircraft {
     protected long id;
     protected String name;
     protected Coordinates coordinates;
-    private static long idCounter = 1;
+    private static long idCounter;
 
     protected Aircraft(String name, Coordinates coordinates) {
         this.name = name;
@@ -20,12 +19,13 @@ abstract class Aircraft {
         id = nextId();
     }
 
-    private long nextId() { return idCounter++; }
+    private long nextId() { return ++idCounter; }
 
     public long getId() { return id; }
+    public String getName() { return name; }
 
     String getOutput() {
-        return "#" + name + "(" + id + ")";
+        return getClass().getSimpleName() + "#" + name + "(" + id + ")";
     }
 }
 
@@ -55,22 +55,23 @@ class Helicopter extends Aircraft implements Flyable {
                 coordinates.setHeight(coordinates.getHeight() - 12);
                 break;
         }
-        System.out.println(getOutput() + weatherInfo);
+        System.out.println(getOutput() + ": " + weatherInfo);
 
         if(coordinates.getHeight() <= 0) {
+            System.out.println(getOutput() + " landing");
             weatherTower.unregister(this);
-            System.out.println(this.getClass().getSimpleName() + getOutput() + " unregistered with coord:");
+            System.out.println("Tower says: " + getOutput() + " unregistered from weather tower.");
             System.out.println("latitude: " + coordinates.getLatitude() + " longitude: " + coordinates.getLongitude() + " height: " + coordinates.getHeight());
         }
-
-
     }
 
     @Override
     public void registerTower(WeatherTower weatherTower) {
         this.weatherTower = weatherTower;
-        this.weatherTower.register(this);
-        System.out.println("Tower says: " + this.getClass().getSimpleName() + getOutput() + " registered to weather tower.");
+        if (this.coordinates.getHeight() > 0) {
+            this.weatherTower.register(this);
+            System.out.println("Tower says: " + getOutput() + " registered to weather tower.");
+        }
     }
 }
 
@@ -100,11 +101,12 @@ class JetPlane extends Aircraft implements Flyable {
                 coordinates.setHeight(coordinates.getHeight() - 7);
                 break;
         }
-        System.out.println(getOutput() + weatherInfo);
+        System.out.println(getOutput() + ": " + weatherInfo);
 
         if(coordinates.getHeight() <= 0) {
+            System.out.println(getOutput() + " landing");
             weatherTower.unregister(this);
-            System.out.println(this.getClass().getSimpleName() + getOutput() + " unregistered with coord:");
+            System.out.println("Tower says: " + getOutput() + " unregistered from weather tower.");
             System.out.println("latitude: " + coordinates.getLatitude() + " longitude: " + coordinates.getLongitude() + " height: " + coordinates.getHeight());
         }
     }
@@ -112,8 +114,10 @@ class JetPlane extends Aircraft implements Flyable {
     @Override
     public void registerTower(WeatherTower weatherTower) {
         this.weatherTower = weatherTower;
-        this.weatherTower.register(this);
-        System.out.println("Tower says: " + this.getClass().getSimpleName() + getOutput() + " registered to weather tower.");
+        if (this.coordinates.getHeight() > 0) {
+            this.weatherTower.register(this);
+            System.out.println("Tower says: " + getOutput() + " registered to weather tower.");
+        }
     }
 }
 
@@ -143,27 +147,36 @@ class Baloon extends Aircraft implements Flyable {
                 coordinates.setHeight(coordinates.getHeight() - 15);
                 break;
         }
-        System.out.println(getOutput() + weatherInfo + " latitude: " + coordinates.getLatitude() + " longitude: " + coordinates.getLongitude() + " height: " + coordinates.getHeight());
+        System.out.println(getOutput() + ": " + weatherInfo);
+
+        if(coordinates.getHeight() <= 0) {
+            System.out.println(getOutput() + " landing");
+            weatherTower.unregister(this);
+            System.out.println("Tower says: " + getOutput() + " unregistered from weather tower.");
+            System.out.println("latitude: " + coordinates.getLatitude() + " longitude: " + coordinates.getLongitude() + " height: " + coordinates.getHeight());
+        }
     }
 
     @Override
     public void registerTower(WeatherTower weatherTower) {
         this.weatherTower = weatherTower;
-        this.weatherTower.register(this);
-        System.out.println("Tower says: " + this.getClass().getSimpleName() + getOutput() + " registered to weather tower.");
+        if (this.coordinates.getHeight() > 0) {
+            this.weatherTower.register(this);
+            System.out.println("Tower says: " + getOutput() + " registered to weather tower.");
+        }
     }
 }
 
 /******************************************/
 
 abstract class AircraftFactory {
-    public Flyable newAircraft(String type, String name, int longitude, int latitude, int height) {
-        if (longitude < 0)
-            longitude = 0;
-        if (latitude < 0)
-            latitude = 0;
+    public Flyable newAircraft(String type, String name, int longitude, int latitude, int height) throws InvalidCoordinatesException, NullPointerException {
+        if (longitude <= 0)
+            throw new InvalidCoordinatesException("Longitude should be a positive number.");
+        if (latitude <= 0)
+            throw new InvalidCoordinatesException("Latitude should be a positive number.");
         if (height < 0 || height > 100)
-            height = height < 0 ? 0 : (height < 100 ? height : 100);
+            throw new InvalidCoordinatesException("Height should be in a range 0 - 100.");
         Coordinates coord = new Coordinates(longitude, latitude, height);
 
         switch (type) {
@@ -174,14 +187,26 @@ abstract class AircraftFactory {
             case "JETPLANE":
                 return new JetPlane(name, coord);
             default:
-                return null;
+                throw new NullPointerException("Invalid aircraft type.");
         }
     }
 }
 
 class AircraftLauncher extends AircraftFactory {
-    public Flyable createAircraft(String str) {
-        String[] temp = str.split(" ");
-        return newAircraft(temp[0].toUpperCase(Locale.ROOT), temp[1], Integer.parseInt(temp[2]), Integer.parseInt(temp[3]), Integer.parseInt(temp[4]));
+    public Flyable createAircraft(String str, WeatherTower weatherTower) {
+        String[] airInfo = str.split(" ");
+        Flyable temp = null;
+        try {
+            temp = newAircraft(airInfo[0].toUpperCase(Locale.ROOT), airInfo[1],
+                    Integer.parseInt(airInfo[2]), Integer.parseInt(airInfo[3]), Integer.parseInt(airInfo[4]));
+            temp.registerTower(weatherTower);
+        } catch (InvalidCoordinatesException | NullPointerException e) {
+            System.out.println(airInfo[0] + " " + airInfo[1] + " not created. " + e.getMessage());
+        } catch (NumberFormatException e) {
+            System.out.println(airInfo[0] + " " + airInfo[1] + " not created. Invalid integer. " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return temp;
     }
 }
