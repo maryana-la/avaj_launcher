@@ -1,6 +1,6 @@
-package avaj_launcher;
+package avaj_launcher.Flyable;
 
-class Coordinates {
+public class Coordinates {
     private int longitude;
     private int latitude;
     private int height;
