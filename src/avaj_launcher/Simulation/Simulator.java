@@ -1,6 +1,7 @@
 package avaj_launcher.Simulation;
 
-import avaj_launcher.Flyable.*;
+import avaj_launcher.Flyable.AircraftLauncher;
+import avaj_launcher.Flyable.Flyable;
 
 import java.io.FileNotFoundException;
 import java.io.File;
@@ -10,43 +11,50 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Simulator {
-
     static File toWrite;
     private static int num;
+    public static final String RESET = "\u001B[0m";
+    public static final String YELLOW = "\u001B[33m";
 
     public static void main (String[] args) {
         if (args.length < 1) {
-            System.out.println("Invalid number of arguments.");
-            System.exit(-1);
+            printError("Invalid number of arguments.", -1);
+        } else if (args.length == 2 && "MD5".equals(args[1])) {
+            MD5.encryptFile(args[0]);
+        } else {
+            ArrayList<String> aircraftsToString = new ArrayList<>();
+            receiveInfoFromInput(args[0], aircraftsToString);
+            createOutput();
+            WeatherTower weatherTower = new WeatherTower();
+            launchAircrafts(weatherTower, aircraftsToString);
+            runSimulation(weatherTower);
         }
-        ArrayList<String> aircraftsToString = new ArrayList<>();
-        receiveInfoFromInput(args, aircraftsToString);
-        createOutput();
-        WeatherTower weatherTower = new WeatherTower();
-        launchAircrafts(weatherTower, aircraftsToString);
-        runSimulation(weatherTower);
+//        while (true) {}
     }
 
-    private static void receiveInfoFromInput(String[] args, ArrayList<String> aircraftsToString) {
+    private static void receiveInfoFromInput(String argName, ArrayList<String> aircraftsToString) {
         try {
-            File file = new File(args[0]);
-            Scanner sc = new Scanner(file);
+            File file = new File(argName);
 
-            num = Integer.parseInt(sc.nextLine());
-            if (num <= 0)
-                throw new NumberFormatException("Not a positive integer.");
-            while(sc.hasNextLine()) {
-                aircraftsToString.add(sc.nextLine());
+            if (argName.endsWith(".MD")) {
+                num = MD5.decryptFile(file, aircraftsToString);
+                if (num <= 0)
+                    throw new NumberFormatException("Not a positive integer.");
+            } else {
+                Scanner sc = new Scanner(file);
+                num = Integer.parseInt(sc.nextLine());
+                if (num <= 0)
+                    throw new NumberFormatException("Not a positive integer.");
+                while (sc.hasNextLine()) {
+                    aircraftsToString.add(sc.nextLine());
+                }
             }
         } catch (NumberFormatException e) {
-            System.out.println("Error. Number of simulation is invalid. " + e.getMessage());
-            System.exit(-1);
+            printError("Error. Invalid number of simulations. " + e.getMessage(), -1);
         } catch (FileNotFoundException e) {
-            System.out.println("File error. " + e.getMessage());
-            System.exit(-1);
+            printError("File error. " + e.getMessage(), -1);
         } catch (Exception e) {
-            System.out.println("Error. " + e.getMessage());
-            System.exit(-1);
+            printError("Error. " + e.getMessage(), -1);
         }
     }
 
@@ -55,8 +63,7 @@ public class Simulator {
         try { FileWriter writer = new FileWriter(toWrite);
             writer.write("");
         } catch (IOException e) {
-            System.out.println("Error with output file. " + e.getMessage());
-            System.exit(-1);
+            printError("Error with output file. " + e.getMessage(), -1);
         }
     }
 
@@ -81,8 +88,17 @@ public class Simulator {
         try (FileWriter writer = new FileWriter(toWrite, true)) {
             writer.write(str + "\n");
         } catch (IOException e) {
-            System.out.println("Error writing to file. " + e.getMessage());
-            System.exit(-1);
+            printError("Error writing to file. " + e.getMessage(), -1);
+        }
+    }
+
+    public static void printError(String msg, int err) {
+        if (err < 0) {
+            System.err.println(msg);
+//            System.err.println(msg);
+            System.exit(err);
+        } else {
+            System.out.println(YELLOW + msg + RESET);
         }
     }
 }
