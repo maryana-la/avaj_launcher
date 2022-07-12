@@ -1,6 +1,6 @@
 package avaj_launcher.Flyable;
 
-import avaj_launcher.Simulation.Simulator;
+import avaj_launcher.Simulation.LogFile;
 import avaj_launcher.Simulation.WeatherTower;
 
 public class Helicopter extends Aircraft implements Flyable {
@@ -29,13 +29,13 @@ public class Helicopter extends Aircraft implements Flyable {
                 coordinates.setHeight(coordinates.getHeight() - 12);
                 break;
         }
-        Simulator.addToFile(getOutput() + ": " + weatherInfo);
+        LogFile.addToFile(getOutput() + ": " + weatherTower.getPhrase(weatherInfo));
 
         if(coordinates.getHeight() <= 0) {
-            Simulator.addToFile(getOutput() + " landing");
-            Simulator.addToFile(getOutput() + "latitude: " + coordinates.getLatitude() + " longitude: " + coordinates.getLongitude() + " height: " + coordinates.getHeight());
+            LogFile.addToFile(getOutput() + " landing");
+            LogFile.addToFile(getOutput() + "latitude: " + coordinates.getLatitude() + " longitude: " + coordinates.getLongitude() + " height: " + coordinates.getHeight());
             weatherTower.unregister(this);
-            Simulator.addToFile("Tower says: " + getOutput() + " unregistered from weather tower.");
+            LogFile.addToFile("Tower says: " + getOutput() + " unregistered from weather tower.");
         }
     }
 
@@ -44,7 +44,7 @@ public class Helicopter extends Aircraft implements Flyable {
         this.weatherTower = weatherTower;
         if (this.coordinates.getHeight() > 0) {
             this.weatherTower.register(this);
-            Simulator.addToFile("Tower says: " + getOutput() + " registered to weather tower.");
+            LogFile.addToFile("Tower says: " + getOutput() + " registered to weather tower.");
         }
     }
 }

@@ -1,14 +1,7 @@
-10
-Baleeeeoon B1 5 10 35
-Baloon B2 1 8 -66
-JetPlane J1 we 44 23
-Helicopter H1 654 33 20
+12
+JetPlane J1 6 44 23
 Helicopter H2 22 33 44
 Helicopter H3 98 68 99
 Baloon B3 102 22 10
 JetPlane J2 11 99 15
 Helicopter H4 223 23 54
-sds sdfdfg dgdf g
-dfs
-fdf b
-c vx

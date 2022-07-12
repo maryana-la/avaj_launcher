@@ -14,4 +14,18 @@ public class WeatherTower extends Tower {
     }
 
     void changeWeather() { super.conditionsChanged(); }
+
+    public String getPhrase(String weatherType) {
+        switch (weatherType) {
+            case "SUN":
+                return "SUN: What a perfect day to enjoy a flight!";
+            case "RAIN":
+                return "RAIN:  It's raining. Better watch out for lightings.";
+            case "FOG":
+                return "FOG: I can't see anything around!";
+            case "SNOW":
+            default:
+                return "SNOW: It's snowing. We should have stayed at home";
+        }
+    }
 }
