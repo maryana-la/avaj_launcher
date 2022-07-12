@@ -13,18 +13,16 @@ public class MD5 {
     private static final String BALOON = "994736b4f0aec72f6e5ae580051d012f";
     private static final String HELICOPTER = "2ab8b43468e8b92b0fc5c81e70e35a2d";
     private static final String JETPLANE = "554cd647d6b135f7e36ab1214c5e816a";
-    private static final int MAX_NUMBER = 100;
+    private static final int MAX_NUMBER = 1000;
+    private static final int MIN_NUMBER = -1000;
 
     public static void encryptFile(String fileName) {
         try {
             File fileIn = new File(fileName);
             Scanner sc = new Scanner(fileIn);
-
-//            create outFile
             File fileOut = new File("scenario.MD5");
             FileWriter writer = new FileWriter(fileOut);
 
-//            reading original
             String buffer;
             buffer = Integer.toString(sc.nextInt());
             writer.write(encryptWord(buffer) + "\n");
@@ -55,8 +53,7 @@ public class MD5 {
         try {
             digest = MessageDigest.getInstance("MD5");
             digest.update(password.getBytes(), 0, password.length());
-            String secured = new BigInteger(1, digest.digest()).toString(16);
-            return secured;
+            return new BigInteger(1, digest.digest()).toString(16);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
@@ -73,22 +70,54 @@ public class MD5 {
                 aircraftsToString.add(decryptString(sc.nextLine()));
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            Simulator.printError(e.getMessage(), -1);
         }
         return num;
 
     }
 
-    private static String decryptString(String coded) {
-        String result = null;
-        //todo decoding
-
+    private static String decryptString(String coded) throws UnableToDecryptException {
+        String result = "";
+        String[] splitted = coded.split(" ");
+        if (splitted.length != 5)
+            throw new UnableToDecryptException("Wrong amount of arguments");
+        result += (getAircraftType(splitted[0]) + " ");
+        result += (getAircraftName(splitted[1]) + " ");
+        result += (decryptNum(splitted[2]) + " ");
+        result += (decryptNum(splitted[3]) + " ");
+        result += (decryptNum(splitted[4]));
         return result;
 
     }
 
-    private static int decryptNum(String str) {
-        for (int i = 0; i <= MAX_NUMBER; i++) {
+    private static String getAircraftType(String airCoded) throws UnableToDecryptException {
+        switch (airCoded) {
+            case BALOON:
+                return "Baloon";
+            case HELICOPTER:
+                return "Helicopter";
+            case JETPLANE:
+                return "JetPlane";
+            default:
+                throw new UnableToDecryptException("Invalid aircraft type");
+        }
+    }
+
+    private static String getAircraftName(String airCoded) throws UnableToDecryptException {
+        char[] letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
+        for (char letter : letters) {
+            String temp;
+            for (int i = 0; i <= MAX_NUMBER; i++) {
+                temp = letter + Integer.toString(i);
+                if (encryptWord(temp).equals(airCoded))
+                    return temp;
+            }
+        }
+        throw new UnableToDecryptException("Invalid aircraft name");
+    }
+
+    public static int decryptNum(String str) {
+        for (int i = MIN_NUMBER; i <= MAX_NUMBER; i++) {
             if (str.equals(encryptWord(Integer.toString(i)))) {
                 return i;
             }
