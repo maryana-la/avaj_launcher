@@ -1,7 +1,9 @@
 package avaj_launcher.Flyable;
 
-import avaj_launcher.Simulation.LogFile;
+import avaj_launcher.Utils.LogFile;
 import avaj_launcher.Simulation.WeatherTower;
+
+import java.io.StringReader;
 
 public class Baloon extends Aircraft implements Flyable {
     private WeatherTower weatherTower;
@@ -15,25 +17,24 @@ public class Baloon extends Aircraft implements Flyable {
         String weatherInfo = weatherTower.getWeather(coordinates);
         switch (weatherInfo) {
             case "SUN":
-                coordinates.setLongitude(coordinates.getLongitude() + 2);
-                coordinates.setHeight(coordinates.getHeight() + 4);
+                coordinates.updateCoordinates(2, 0, 4);
                 break;
             case "RAIN":
-                coordinates.setHeight(coordinates.getHeight() - 5);
+                coordinates.updateCoordinates(0, 0, -5);
                 break;
             case "FOG":
-                coordinates.setHeight(coordinates.getHeight() - 3);
+                coordinates.updateCoordinates(0, 0, -3);
                 break;
             case "SNOW":
             default:
-                coordinates.setHeight(coordinates.getHeight() - 15);
+                coordinates.updateCoordinates(0, 0, -15);
                 break;
         }
         LogFile.addToFile(getOutput() + ": " + weatherTower.getPhrase(weatherInfo));
 
         if(coordinates.getHeight() <= 0) {
             LogFile.addToFile(getOutput() + " landing");
-            LogFile.addToFile(getOutput() + " latitude: " + coordinates.getLatitude() + " longitude: " + coordinates.getLongitude() + " height: " + coordinates.getHeight());
+            LogFile.addToFile(getOutput() + coordinates.outputCoordinates());
             weatherTower.unregister(this);
             LogFile.addToFile("Tower says: " + getOutput() + " unregistered from weather tower.");
         }

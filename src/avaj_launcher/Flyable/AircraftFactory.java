@@ -1,6 +1,6 @@
 package avaj_launcher.Flyable;
 
-import avaj_launcher.Simulation.InvalidCoordinatesException;
+import avaj_launcher.Utils.InvalidCoordinatesException;
 
 public abstract class AircraftFactory {
     public Flyable newAircraft(String type, String name, int longitude, int latitude, int height)

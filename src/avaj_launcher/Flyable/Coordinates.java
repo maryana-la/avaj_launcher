@@ -27,4 +27,18 @@ public class Coordinates {
         else
             this.height = Math.min(height, 100);
     }
+
+    public void updateCoordinates (int longitude, int latitude, int height) {
+        this.longitude += longitude;
+        this.latitude += latitude;
+        this.height += height;
+        if (this.height < 0)
+            this.height = 0;
+        else if (this.height > 100)
+            this.height = 100;
+    }
+
+    public String outputCoordinates() {
+        return "latitude: " + getLatitude() + " longitude: " + getLongitude() + " height: " + getHeight();
+    }
 }

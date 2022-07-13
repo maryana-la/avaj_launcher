@@ -1,4 +1,6 @@
-package avaj_launcher.Simulation;
+package avaj_launcher.Utils;
+
+import avaj_launcher.Simulation.Simulator;
 
 import java.io.File;
 import java.io.FileWriter;

@@ -1,6 +1,6 @@
 package avaj_launcher.Flyable;
 
-import avaj_launcher.Simulation.LogFile;
+import avaj_launcher.Utils.LogFile;
 import avaj_launcher.Simulation.WeatherTower;
 
 public class Helicopter extends Aircraft implements Flyable {
@@ -15,25 +15,24 @@ public class Helicopter extends Aircraft implements Flyable {
         String weatherInfo = weatherTower.getWeather(coordinates);
         switch (weatherInfo) {
             case "SUN":
-                coordinates.setLongitude(coordinates.getLongitude() + 10);
-                coordinates.setHeight(coordinates.getHeight() + 2);
+                coordinates.updateCoordinates(10, 0, 2);
                 break;
             case "RAIN":
-                coordinates.setLongitude(coordinates.getLongitude() + 5);
+                coordinates.updateCoordinates(5, 0, 0);
                 break;
             case "FOG":
-                coordinates.setLongitude(coordinates.getLongitude() + 1);
+                coordinates.updateCoordinates(1, 0, 0);
                 break;
             case "SNOW":
             default:
-                coordinates.setHeight(coordinates.getHeight() - 12);
+                coordinates.updateCoordinates(0, 0, -12);
                 break;
         }
         LogFile.addToFile(getOutput() + ": " + weatherTower.getPhrase(weatherInfo));
 
         if(coordinates.getHeight() <= 0) {
             LogFile.addToFile(getOutput() + " landing");
-            LogFile.addToFile(getOutput() + "latitude: " + coordinates.getLatitude() + " longitude: " + coordinates.getLongitude() + " height: " + coordinates.getHeight());
+            LogFile.addToFile(getOutput() + coordinates.outputCoordinates());
             weatherTower.unregister(this);
             LogFile.addToFile("Tower says: " + getOutput() + " unregistered from weather tower.");
         }

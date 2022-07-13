@@ -1,6 +1,6 @@
 package avaj_launcher.Flyable;
 
-import avaj_launcher.Simulation.InvalidCoordinatesException;
+import avaj_launcher.Utils.InvalidCoordinatesException;
 import avaj_launcher.Simulation.Simulator;
 import avaj_launcher.Simulation.WeatherTower;
 
@@ -17,9 +17,9 @@ public class AircraftLauncher extends AircraftFactory {
                     Integer.parseInt(airInfo[2]), Integer.parseInt(airInfo[3]), Integer.parseInt(airInfo[4]));
             temp.registerTower(weatherTower);
         } catch (InvalidCoordinatesException | NullPointerException e) {
-            Simulator.printError(airInfo[0] + " " + airInfo[1] + " not created. " + e.getMessage(), 0);
+            Simulator.printError(str + " not created. " + e.getMessage(), 0);
         } catch (NumberFormatException e) {
-            Simulator.printError(airInfo[0] + " " + airInfo[1] + " not created. Invalid integer. " + e.getMessage(), 0);
+            Simulator.printError(str + " not created. Invalid integer. " + e.getMessage(), 0);
         } catch (Exception e) {
             Simulator.printError("Error creating an Aircraft. " + e.getMessage(), 0);
         }

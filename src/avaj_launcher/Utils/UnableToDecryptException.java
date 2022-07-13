@@ -1,4 +1,4 @@
-package avaj_launcher.Simulation;
+package avaj_launcher.Utils;
 
 public class UnableToDecryptException extends Exception {
     public UnableToDecryptException(String msg) {

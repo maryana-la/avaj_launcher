@@ -2,6 +2,8 @@ package avaj_launcher.Simulation;
 
 import avaj_launcher.Flyable.AircraftLauncher;
 import avaj_launcher.Flyable.Flyable;
+import avaj_launcher.Utils.LogFile;
+import avaj_launcher.Utils.MD5;
 
 import java.io.FileNotFoundException;
 import java.io.File;
@@ -21,6 +23,7 @@ public class Simulator {
         } else {
             ArrayList<String> aircraftsToString = new ArrayList<>();
             WeatherTower weatherTower = new WeatherTower();
+
             receiveInfoFromInput(args[0], aircraftsToString);
             LogFile.createOutput();
             launchAircrafts(weatherTower, aircraftsToString);
