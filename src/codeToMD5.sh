@@ -1,3 +1,3 @@
 #!/bin/bash
 
-java avaj_launcher.Simulation.Simulator scenario.txt MD5
+java avaj_launcher.Simulation.Simulator $1 MD5

@@ -19,7 +19,7 @@ public class Simulator {
         if (args.length == 2 && "MD5".equals(args[1])) {
             MD5.encryptFile(args[0]);
         } else if (args.length != 1) {
-            printError("Invalid number of arguments.", -1);
+            printError("Invalid number of arguments. \nUsage ./run.sh scenario.txt MD5, MD5 - option for decoding file", -1);
         } else {
             ArrayList<String> aircraftsToString = new ArrayList<>();
             WeatherTower weatherTower = new WeatherTower();
