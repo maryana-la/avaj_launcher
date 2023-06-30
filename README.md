@@ -10,7 +10,8 @@ Following design patterns need to be used Observer, Singleton and Factory.
 More details in [subject].
 
 ### Project structure
-![avaj_uml](https://github.com/maryana-la/avaj_launcher/assets/75047240/405b63a4-3c50-483d-b798-ac6917355b10)
+
+![avaj_uml](https://github.com/maryana-la/avaj_launcher/assets/75047240/0e29b252-5e9e-488a-b378-7bd32cd6a95c)
 
 
 ### Launch the program
